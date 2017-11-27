@@ -6,7 +6,7 @@ require('rxjs/add/operator/map');
 require('rxjs/add/operator/multicast');
 
 
-class Wind extends EventEmmiter {
+module.exports = class Wind extends EventEmmiter {
     constructor(){
 
         let randomConfigs = {
@@ -35,7 +35,4 @@ class Wind extends EventEmmiter {
         super.onStopEventChange();
         this.activeMode = false;
     }
-}
-
-const wind = new Wind();
-module.exports = wind;
+};

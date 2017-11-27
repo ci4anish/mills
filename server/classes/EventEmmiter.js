@@ -18,7 +18,7 @@ module.exports = class EventEmmiter {
     }
 
     startEventChange(){
-        setTimeout(() => {
+        this.startTimer = setTimeout(() => {
             this.powerKoef = this.powerKoefActive;
             this.onStartEventChange();
             this.stopEventChange().then(() => this.startEventChange());
@@ -29,7 +29,7 @@ module.exports = class EventEmmiter {
 
     stopEventChange(){
         return new Promise(resolve => {
-            setTimeout(() => {
+            this.stopTimer = setTimeout(() => {
                 this.resetPowerKoef();
                 this.onStopEventChange();
                 resolve();
@@ -41,5 +41,10 @@ module.exports = class EventEmmiter {
 
     resetPowerKoef(){
         this.powerKoef = 1;
+    }
+
+    destroy(){
+        clearTimeout(this.startTimer);
+        clearTimeout(this.stopTimer);
     }
 };

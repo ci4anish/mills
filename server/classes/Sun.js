@@ -1,7 +1,7 @@
 const EventEmmiter = require("./EventEmmiter");
 const Subject = require('rxjs/Subject').Subject;
 
-class Sun extends EventEmmiter {
+module.exports = class Sun extends EventEmmiter {
     constructor(){
         let randomConfigs = {
             eventPeriodicity: { min : 10000 ,max : 40000},
@@ -36,8 +36,4 @@ class Sun extends EventEmmiter {
         this.raysSpeedInterval = this.params.raysSpeedInterval;
         this.sendEvent(false);
     }
-}
-
-const sun = new Sun();
-
-module.exports = sun;
+};
