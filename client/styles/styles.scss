@@ -1,0 +1,156 @@
+html, body{
+    height: 100%;
+}
+
+body{
+    margin: 0;
+    display: flex;
+}
+
+#main-container{
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.cloud{
+
+    .part{
+        background-color: white;
+        position: absolute;
+        border-radius: 50%;
+    }
+
+    &.small{
+        .first-part{
+            height: 25px;
+            width: 36px;
+            top: 5px;
+        }
+
+        .second-part{
+            left: 12px;
+            top: 0;
+            width: 61px;
+            height: 40px;
+        }
+
+        .third-part{
+            left: 68px;
+            height: 26px;
+            width: 38px;
+            top: 5px;
+        }
+
+        .forth-part{
+            left: 51px;
+            height: 35px;
+            width: 38px;
+            top: 5px;
+        }
+    }
+
+    &.medium{
+        .first-part{
+            height: 32px;
+            width: 40px;
+            top: 5px;
+        }
+
+        .second-part{
+            left: 25px;
+            top: -6px;
+            width: 59px;
+            height: 48px;
+        }
+
+        .third-part{
+            left: 58px;
+            width: 59px;
+            height: 44px;
+        }
+
+        .forth-part{
+            left: 98px;
+            top: 6px;
+            width: 36px;
+            height: 29px;
+        }
+    }
+
+    &.large{
+        .first-part{
+            height: 49px;
+            width: 63px;
+            top: 5px;
+        }
+
+        .second-part{
+            left: 31px;
+            top: -12px;
+            width: 80px;
+            height: 71px;
+        }
+
+        .third-part{
+            left: 80px;
+            width: 59px;
+            height: 55px;
+        }
+
+        .forth-part{
+            left: 115px;
+            top: 15px;
+            width: 40px;
+            height: 37px;
+        }
+    }
+}
+
+.mill-container, #land, .mill, .point, .cloud, #sun, #sun-rays-background, #sky, #score-bar{
+    position: absolute;
+}
+
+#score-bar{
+    z-index: 2;
+    top: 0;
+    left: 0;
+    font-size: 30px;
+    padding: 10px;
+    letter-spacing: 2px;
+    transition: .2s;
+}
+
+#sky{
+    z-index: 1;
+}
+
+#sun-rays-background, #sun{
+    z-index: 2;
+}
+
+#sun, #sky{
+    transition: background-color .5s;
+}
+
+#sun{
+    border-radius: 50%;
+}
+
+.sun-ray{
+    transition: fill .3s;
+}
+
+#land{
+    z-index: 10;
+}
+
+.mill{
+    background: #ffd979;
+    z-index: 15;
+}
+
+.mill-container{
+    z-index: 20;
+    box-shadow: 0px 2px 3px -3px green;
+}
