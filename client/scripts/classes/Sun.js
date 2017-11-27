@@ -86,15 +86,13 @@ export class Sun extends EventEmmiter {
     setup(){
         this.draw();
         this.setServerListener();
-    }
+        this.socketEvent.subscribe((e) => {
+            if(e.active){
+                this.eventStream.next(e.powerKoef);
+            }
 
-    onEvent(e){
-        // console.log("onEvent");
-        if(e.active){
-            this.eventStream.next(e.powerKoef);
-        }
-
-        this.shine(e.active);
+            this.shine(e.active);
+        });
     }
 
     draw(){

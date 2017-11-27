@@ -1,17 +1,13 @@
 import { screenHeight } from "../constants";
 import { EventEmmiter } from "./EventEmmiter";
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/multicast';
-
+require('rxjs/add/operator/map');
 
 export class Wind extends EventEmmiter {
     constructor(){
         super();
         this.maxPower = 200;
         this.setServerListener();
+        this.socketEvent.map(e => e.powerKoef).subscribe(this.eventStream);
     }
 
     getPowerInPoint(point){

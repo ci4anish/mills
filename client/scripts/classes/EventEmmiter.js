@@ -1,5 +1,7 @@
 import { socket } from "../socket";
 import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
+require('rxjs/add/observable/fromEvent');
 
 export class EventEmmiter {
     constructor(){
@@ -11,12 +13,8 @@ export class EventEmmiter {
     }
 
     setServerListener(){
-        socket.on(this.constructor.name, this.onEvent.bind(this));
+        this.socketEvent = Observable.fromEvent(socket, this.constructor.name);
         socket.on(this.constructor.name + " changed", this.onEventChanged.bind(this));
-    }
-
-    onEvent(e){
-        this.eventStream.next(e.powerKoef);
     }
 
     onEventChanged(e){}
