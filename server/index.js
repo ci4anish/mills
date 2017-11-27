@@ -23,7 +23,7 @@ io.on('connection', function(socket){
         console.log('user disconnected');
         activeSockets.splice(activeSockets.indexOf(socket), 1);
         if(gameRoom){
-            gameRoom.destroy(activeSockets);
+            gameRoom.destroy();
             gameRoom = undefined;
         }
     });

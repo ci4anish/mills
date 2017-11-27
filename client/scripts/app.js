@@ -28,9 +28,11 @@ clouds.forEach(cloud => {
 
 gameScore.draw();
 sky.draw();
-land.draw();
+land.setup();
 sun.setup();
 millsManager.setup();
+millsManager.addMill();
+millsManager.addMill();
 millsManager.addMill();
 millsManager.addMill();
 millsManager.addMill();

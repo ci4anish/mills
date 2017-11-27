@@ -33,5 +33,7 @@ module.exports = class GameRoom {
         this.windEventChangeSubscription.unsubscribe();
         this.sunEventSubscription.unsubscribe();
         this.sunEventChangeSubscription.unsubscribe();
+        this.wind.destroy();
+        this.sun.destroy();
     }
 };
