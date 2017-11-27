@@ -9,21 +9,9 @@ import 'rxjs/add/operator/multicast';
 
 export class Wind extends EventEmmiter {
     constructor(){
-
-        let randomConfigs = {
-            eventPeriodicity: { min : 10000, max : 40000},
-            eventTime: { min : 6000 ,max : 10000}
-        };
-
-        super(3, randomConfigs);
+        super();
         this.maxPower = 200;
-
-        this.eventStream = Observable.interval(40)
-                            .map(() => this.powerKoef)
-                            .multicast(() => new Subject())
-                            .refCount();
-
-        this.startEventChange();
+        this.setServerListener();
     }
 
     getPowerInPoint(point){

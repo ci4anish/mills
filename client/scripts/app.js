@@ -3,13 +3,7 @@ import { land } from "./classes/Land";
 import { sun } from "./classes/Sun";
 import { millsManager } from "./classes/MillsManager";
 import { sky } from "./classes/Sky";
-import { gameScore } from "./classes/GameScore"
-
-import { socket } from "./socket";
-
-socket.emit("action", "User is emmiting some action");
-socket.on("server event", (e) => { console.log("server event", e) });
-socket.on("broadcast", (e) => { console.log("broadcast", e) });
+import { gameScore } from "./classes/GameScore";
 
 let clouds = [
     new Cloud({x: 50, y: 135}),

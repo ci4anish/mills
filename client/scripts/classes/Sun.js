@@ -2,7 +2,6 @@ import { mainContainer, sunParams, screenWidth } from "../constants";
 import { select as d3Select } from "d3-selection";
 import { EventEmmiter } from "./EventEmmiter";
 import { sky } from "./Sky";
-import { Subject } from 'rxjs/Subject';
 
 export class SunRays {
 
@@ -72,13 +71,7 @@ export class SunRays {
 
 export class Sun extends EventEmmiter {
     constructor(){
-
-        let randomConfigs = {
-            eventPeriodicity: { min : 10000 ,max : 40000},
-            eventTime: { min : 4000 ,max : 8000}
-        };
-
-        super(3, randomConfigs);
+        super();
         this.params = sunParams;
         let offset = 50;
         this.position = { x: screenWidth - (offset + this.params.size), y: offset };
@@ -87,14 +80,21 @@ export class Sun extends EventEmmiter {
             x: screenWidth - (this.sunRaysBackgroundSize / 2 + offset + this.params.size / 2),
             y: offset + this.params.size / 2 - this.sunRaysBackgroundSize / 2
         };
-        this.resetMode();
-        this.eventStream = new Subject();
+        this.color = this.params.color;
     }
 
     setup(){
         this.draw();
-        this.shine(false);
-        this.startEventChange();
+        this.setServerListener();
+    }
+
+    onEvent(e){
+        // console.log("onEvent");
+        if(e.active){
+            this.eventStream.next(e.powerKoef);
+        }
+
+        this.shine(e.active);
     }
 
     draw(){
@@ -134,41 +134,26 @@ export class Sun extends EventEmmiter {
         return this.power;
     }
 
-    shine(activeMode){
-        clearInterval(this.shineInterval);
-        this.sunRaysOuter.changeRaysColor();
-        this.sunRaysInner.changeRaysColor();
-        this.shineInterval = setInterval(() => {
-            this.animateSunRays();
-            if(activeMode){
-                this.eventStream.next(this.powerKoef);
-            }
-        }, this.raysSpeedInterval);
-    }
-
-    animateSunRays(){
+    shine(){
         this.sunRaysOuter.animateRays();
         this.sunRaysInner.animateRays();
     }
 
-    onStartEventChange(){
-        sky.setActiveBackground();
-        this.color = this.params.colorActive;
-        this.raysSpeedInterval = this.params.raysSpeedActiveInterval;
-        this.body.style.backgroundColor = this.color;
-        this.shine(true);
+    onEventChanged(e){
+        if(e.changeStarted){
+            sky.setActiveBackground();
+            this.color = this.params.colorActive;
+        }else{
+            sky.resetBackground();
+            this.color = this.params.color;
+        }
+        this.changeColors();
     }
 
-    onStopEventChange(){
-        sky.resetBackground();
-        this.resetMode();
+    changeColors(){
         this.body.style.backgroundColor = this.color;
-        this.shine(false);
-    }
-
-    resetMode(){
-        this.color = this.params.color;
-        this.raysSpeedInterval = this.params.raysSpeedInterval;
+        this.sunRaysOuter.changeRaysColor();
+        this.sunRaysInner.changeRaysColor();
     }
 }
 

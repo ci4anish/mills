@@ -1,39 +1,23 @@
-import Utils from "../utils"
+import { socket } from "../socket";
+import { Subject } from 'rxjs/Subject';
 
 export class EventEmmiter {
-    constructor(powerKoefActive, randomConfigs){
-        this.resetPowerKoef();
-        this.powerKoefActive = powerKoefActive;
-        this.config = randomConfigs;
+    constructor(){
+        this.eventStream = new Subject();
     }
 
     getStream(){
         return this.eventStream;
     }
 
-    startEventChange(){
-        setTimeout(() => {
-            this.powerKoef = this.powerKoefActive;
-            this.onStartEventChange();
-            this.stopEventChange().then(() => this.startEventChange());
-        }, Utils.getRandomInt(this.config.eventPeriodicity.min, this.config.eventPeriodicity.max));
+    setServerListener(){
+        socket.on(this.constructor.name, this.onEvent.bind(this));
+        socket.on(this.constructor.name + " changed", this.onEventChanged.bind(this));
     }
 
-    onStartEventChange(){}
-
-    stopEventChange(){
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.resetPowerKoef();
-                this.onStopEventChange();
-                resolve();
-            }, Utils.getRandomInt(this.config.eventTime.min, this.config.eventTime.max));
-        });
+    onEvent(e){
+        this.eventStream.next(e.powerKoef);
     }
 
-    onStopEventChange(){}
-
-    resetPowerKoef(){
-        this.powerKoef = 1;
-    }
+    onEventChanged(e){}
 }
