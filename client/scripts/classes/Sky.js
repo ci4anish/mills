@@ -1,4 +1,5 @@
 import { mainContainer } from "../constants";
+import Utils from "../utils";
 
 export class Sky {
     constructor(){
@@ -9,11 +10,7 @@ export class Sky {
     draw(){
         this.element = document.createElement("DIV");
         this.element.id = "sky";
-        this.element.style.top = 0;
-        this.element.style.bottom = 0;
-        this.element.style.right = 0;
-        this.element.style.left = 0;
-        this.element.style.margin = "auto";
+        this.element.classList.add("full-screen");
         this.resetBackground();
 
         mainContainer.appendChild(this.element);
@@ -25,6 +22,10 @@ export class Sky {
 
     setActiveBackground(){
         this.element.style.background = this.colorActive;
+    }
+
+    destroy(){
+        Utils.removeElement(this.element);
     }
 }
 

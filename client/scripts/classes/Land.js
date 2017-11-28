@@ -16,7 +16,7 @@ export class Land {
         this.element.style.top = skyHeight + "px";
         this.element.setAttribute("width", this.size.width + "px");
         this.element.setAttribute("height", this.size.height + "px");
-        this.getPathPoints();
+        this.pathPoints = this.pathPoints || this.getPathPoints();
 
         let path = `M${this.pathPoints.startPoint.x} ${this.pathPoints.startPoint.y}
                     Q ${this.pathPoints.q.x} ${this.pathPoints.q.y}`;
@@ -35,30 +35,31 @@ export class Land {
     getPathPoints(){
         let withBetweenMountains = 100;
         let startPoint = {x: 0, y: this.size.height / 1.6};
-        this.pathPoints = {};
-        this.pathPoints.startPoint = startPoint;
-        this.pathPoints.q = {
+        let pathPoints = {};
+        pathPoints.startPoint = startPoint;
+        pathPoints.q = {
             x: withBetweenMountains + " " + startPoint.y / 3,
             y: withBetweenMountains * 2 + " " + (startPoint.y / 2 + 100)
         };
 
-        this.pathPoints.t = [];
-        this.pathPoints.t.push({ x: withBetweenMountains * 4, y: startPoint.y / 2 });
-        this.pathPoints.t.push({ x: withBetweenMountains * 6, y: startPoint.y / 2 + Utils.getRandomInt(0, 30) });
-        this.pathPoints.t.push({ x: withBetweenMountains * 8, y: startPoint.y / 2 });
-        this.pathPoints.t.push({ x: withBetweenMountains * 10, y: startPoint.y / 2 - Utils.getRandomInt(0, 30) });
-        this.pathPoints.t.push({ x: withBetweenMountains * 12, y: startPoint.y / 2 });
-        this.pathPoints.t.push({ x: withBetweenMountains * 14, y: startPoint.y / 2 + Utils.getRandomInt(0, 30) });
-        this.pathPoints.t.push({ x: withBetweenMountains * 16, y: startPoint.y / 2 });
-        this.pathPoints.t.push({ x: withBetweenMountains * 18, y: startPoint.y / 2 - Utils.getRandomInt(0, 30) });
-        this.pathPoints.t.push({ x: withBetweenMountains * 20, y: startPoint.y / 2 });
-        this.pathPoints.v1 = this.size.height;
-        this.pathPoints.h = 0;
-        this.pathPoints.v2 = startPoint.x;
+        pathPoints.t = [];
+        pathPoints.t.push({ x: withBetweenMountains * 4, y: startPoint.y / 2 });
+        pathPoints.t.push({ x: withBetweenMountains * 6, y: startPoint.y / 2 + Utils.getRandomInt(0, 30) });
+        pathPoints.t.push({ x: withBetweenMountains * 8, y: startPoint.y / 2 });
+        pathPoints.t.push({ x: withBetweenMountains * 10, y: startPoint.y / 2 - Utils.getRandomInt(0, 30) });
+        pathPoints.t.push({ x: withBetweenMountains * 12, y: startPoint.y / 2 });
+        pathPoints.t.push({ x: withBetweenMountains * 14, y: startPoint.y / 2 + Utils.getRandomInt(0, 30) });
+        pathPoints.t.push({ x: withBetweenMountains * 16, y: startPoint.y / 2 });
+        pathPoints.t.push({ x: withBetweenMountains * 18, y: startPoint.y / 2 - Utils.getRandomInt(0, 30) });
+        pathPoints.t.push({ x: withBetweenMountains * 20, y: startPoint.y / 2 });
+        pathPoints.v1 = this.size.height;
+        pathPoints.h = 0;
+        pathPoints.v2 = startPoint.x;
+        return pathPoints;
     }
 
     findAvailablePositions(){
-        let landSize = land.getSize();
+        let landSize = this.getSize();
         let availHeight = landSize.height - this.padding * 2;
         let availWidth = landSize.width - this.padding * 2;
         let rowsCount = Math.floor(availHeight / millParams.millSize.height);
@@ -84,7 +85,7 @@ export class Land {
     }
 
     isLandItem(x, y, width){
-        let landCanvas = land.getCanvas();
+        let landCanvas = this.getCanvas();
         let isLand = true;
 
         // Get the CanvasPixelArray from the given coordinates and dimensions.
@@ -102,7 +103,8 @@ export class Land {
         return isLand;
     }
 
-    setup(){
+    setup(pathPoints){
+        this.pathPoints = pathPoints;
         this.draw();
         this.findAvailablePositions();
     }
@@ -118,6 +120,15 @@ export class Land {
     getSize(){
         return this.size;
     }
-}
 
-export let land = new Land();
+    getPathPoints(){
+        return this.pathPoints;
+    }
+
+    destroy(){
+        this.pathPoints = undefined;
+        this.availablePositions = undefined;
+        this.canvasContext = undefined;
+        Utils.removeElement(this.element);
+    }
+}

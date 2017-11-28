@@ -1,4 +1,5 @@
 import { mainContainer } from "../constants";
+import Utils from "../utils"
 
 export class GameScore {
 
@@ -36,6 +37,8 @@ export class GameScore {
     updateScoreBar(score){
         this.scoreBar.innerText = score;
     }
-}
 
-export const gameScore = new GameScore();
+    destroy(){
+        Utils.removeElement(this.scoreBar);
+    }
+}

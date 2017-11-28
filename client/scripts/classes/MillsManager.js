@@ -1,5 +1,3 @@
-import { land } from "./Land";
-import { gameScore } from "./GameScore";
 import { Mill } from "./Mill";
 import { landPadding } from "../constants";
 import Utils from "../utils"
@@ -28,13 +26,14 @@ class MillsPull {
 }
 
 export class MillsManager {
-    constructor(){
+    constructor(gameRoom){
         this.padding = landPadding;
         this.availableIds = [];
+        this.gameRoom = gameRoom;
     }
 
     setup(){
-        this.availablePositions = land.getAvailablePositions();
+        this.availablePositions = this.gameRoom.land.getAvailablePositions();
         this.createPull();
         this.subscribeOnClicks();
     }
@@ -64,10 +63,10 @@ export class MillsManager {
 
                 if(Math.ceil(lastThreeSum) > 270 && comboCounter <= 0){
                     comboCounter = 2;
-                    gameScore.setComboScore(score, 3);
+                    this.gameRoom.gameScore.setComboScore(score, 3);
                 }else{
                     comboCounter--;
-                    gameScore.setScore(score);
+                    this.gameRoom.gameScore.setScore(score);
                 }
             });
     }
@@ -98,5 +97,3 @@ export class MillsManager {
         this.millsPull.set(mill);
     }
 }
-
-export let millsManager = new MillsManager();

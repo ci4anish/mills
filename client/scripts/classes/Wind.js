@@ -15,5 +15,3 @@ export class Wind extends EventEmmiter {
         return this.maxPower - point.y / scale;
     }
 }
-
-export const wind = new Wind();

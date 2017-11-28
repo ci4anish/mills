@@ -4,6 +4,9 @@ const path = require('path');
 const app = express();
 const server = http.Server(app);
 const GameRoom = require('./classes/GameRoom');
+const ReplaySubject = require('rxjs/ReplaySubject').ReplaySubject;
+require('rxjs/add/operator/map');
+require('rxjs/add/operator/filter');
 
 app.use(express.static(path.resolve('dist.client')));
 
@@ -13,25 +16,27 @@ app.get('*', function(req, res){
 
 const io = require('socket.io')(server);
 
-let activeSockets = [], gameRoom;
+let activeSockets = [], gameRoom, activeSocketsStream = new ReplaySubject(1), activeSocketsSubscription;
 
 io.on('connection', function(socket){
     activeSockets.push(socket);
+    activeSocketsStream.next(activeSockets);
     console.log('a user connected');
 
     socket.on('disconnect', function(socket){
         console.log('user disconnected');
         activeSockets.splice(activeSockets.indexOf(socket), 1);
-        if(gameRoom){
-            gameRoom.destroy();
-            gameRoom = undefined;
-        }
+        activeSocketsStream.next(activeSockets);
     });
 
-    if(activeSockets.length === 2){
-        gameRoom = new GameRoom(io, activeSockets);
-        gameRoom.setup();
-    }
+    socket.on("create-game", (config) => {
+        console.log('create game event');
+        gameRoom = new GameRoom(io, config, socket);
+        activeSocketsSubscription = activeSocketsStream
+            .filter((sockets => sockets.length === 2))
+            .map((sockets => sockets.find(s => s !== socket)))
+            .subscribe(listenerSocket => gameRoom.setup(listenerSocket));
+    });
 });
 
 server.listen(3000, () => console.log('Example app listening on port 3000!'));

@@ -1,7 +1,7 @@
 import { mainContainer, screenWidth } from "../constants";
-import Utils from "../utils"
 import { WindListenerMixin } from "./WindListenerMixin";
 import { mix } from "./Mixin";
+import Utils from "../utils"
 
 export class Cloud extends mix(class Listener {}).with(WindListenerMixin){
 
@@ -46,8 +46,12 @@ export class Cloud extends mix(class Listener {}).with(WindListenerMixin){
 
     setup(){
         this.draw();
-
         this.listenToWind();
+    }
+
+    destroy(){
+        this.unsubscribeFromWind();
+        Utils.removeElement(this.element);
     }
 }
 

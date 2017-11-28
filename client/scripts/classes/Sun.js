@@ -1,7 +1,7 @@
 import { mainContainer, sunParams, screenWidth } from "../constants";
 import { select as d3Select } from "d3-selection";
 import { EventEmmiter } from "./EventEmmiter";
-import { sky } from "./Sky";
+import Utils from "../utils"
 
 export class SunRays {
 
@@ -70,7 +70,7 @@ export class SunRays {
 }
 
 export class Sun extends EventEmmiter {
-    constructor(){
+    constructor(gameRoom){
         super();
         this.params = sunParams;
         let offset = 50;
@@ -81,6 +81,7 @@ export class Sun extends EventEmmiter {
             y: offset + this.params.size / 2 - this.sunRaysBackgroundSize / 2
         };
         this.color = this.params.color;
+        this.gameRoom = gameRoom;
     }
 
     setup(){
@@ -139,10 +140,10 @@ export class Sun extends EventEmmiter {
 
     onEventChanged(e){
         if(e.changeStarted){
-            sky.setActiveBackground();
+            this.gameRoom.sky.setActiveBackground();
             this.color = this.params.colorActive;
         }else{
-            sky.resetBackground();
+            this.gameRoom.sky.resetBackground();
             this.color = this.params.color;
         }
         this.changeColors();
@@ -153,6 +154,12 @@ export class Sun extends EventEmmiter {
         this.sunRaysOuter.changeRaysColor();
         this.sunRaysInner.changeRaysColor();
     }
-}
 
-export const sun = new Sun();
+    destroy(){
+        super.destroy();
+        this.sunRaysOuter = undefined;
+        this.sunRaysInner = undefined;
+        Utils.removeElement(this.body);
+        Utils.removeElement(this.sunRaysBackground);
+    }
+}

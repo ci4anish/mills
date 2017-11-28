@@ -6,6 +6,7 @@ require('rxjs/add/observable/fromEvent');
 export class EventEmmiter {
     constructor(){
         this.eventStream = new Subject();
+        this.eventChangeListener = this.onEventChanged.bind(this);
     }
 
     getStream(){
@@ -14,8 +15,13 @@ export class EventEmmiter {
 
     setServerListener(){
         this.socketEvent = Observable.fromEvent(socket, this.constructor.name);
-        socket.on(this.constructor.name + " changed", this.onEventChanged.bind(this));
+        socket.on(this.constructor.name + " changed", this.eventChangeListener);
     }
 
     onEventChanged(e){}
+
+    destroy(){
+        this.socketEvent.unsubscribe();
+        socket.removeListener(this.constructor.name + " changed", this.eventChangeListener);
+    }
 }
