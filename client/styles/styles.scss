@@ -107,8 +107,18 @@ body{
     }
 }
 
-.mill-container, #land, .mill, .point, .cloud, #sun, #sun-rays-background, #sky, #score-bar{
+.mill-container, #land, .mill, .point, .cloud, #sun, #sun-rays-background, #sky, #score-bar, #overlay{
     position: absolute;
+}
+
+#overlay{
+    margin: auto;
+    background: red;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
 }
 
 #score-bar{

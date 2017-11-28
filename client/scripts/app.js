@@ -36,6 +36,3 @@ millsManager.addMill();
 millsManager.addMill();
 millsManager.addMill();
 millsManager.addMill();
-// setInterval(() => {
-//     millsManager.addMill();
-// }, 9000);

@@ -16,24 +16,45 @@ export class Land {
         this.element.style.top = skyHeight + "px";
         this.element.setAttribute("width", this.size.width + "px");
         this.element.setAttribute("height", this.size.height + "px");
-        let startPoint = {x: 0, y: this.size.height / 1.6};
-        let withBetweenMountains = 100;
-        let path = `M${startPoint.x} ${startPoint.y}
-        Q ${withBetweenMountains} ${startPoint.y / 3} ${withBetweenMountains * 2} ${startPoint.y / 2 + 100}
-        T ${withBetweenMountains * 4} ${startPoint.y / 2}
-        T ${withBetweenMountains * 6} ${startPoint.y / 2 + Utils.getRandomInt(0, 30)}
-        T ${withBetweenMountains * 8} ${startPoint.y / 2}
-        T ${withBetweenMountains * 10} ${startPoint.y / 2 - Utils.getRandomInt(0, 30)}
-        T ${withBetweenMountains * 12} ${startPoint.y / 2}
-        T ${withBetweenMountains * 14} ${startPoint.y / 2 + Utils.getRandomInt(0, 30)}
-        T ${withBetweenMountains * 16} ${startPoint.y / 2}
-        T ${withBetweenMountains * 18} ${startPoint.y / 2 - Utils.getRandomInt(0, 30)}
-        T ${withBetweenMountains * 20} ${startPoint.y / 2}
-        V ${this.size.height} H 0 V ${startPoint.x}`;
+        this.getPathPoints();
+
+        let path = `M${this.pathPoints.startPoint.x} ${this.pathPoints.startPoint.y}
+                    Q ${this.pathPoints.q.x} ${this.pathPoints.q.y}`;
+
+        for(let i = 0; i < this.pathPoints.t.length; i++){
+            path += `T ${this.pathPoints.t[i].x} ${this.pathPoints.t[i].y}`;
+        }
+
+        path += `V ${this.pathPoints.v1} H ${this.pathPoints.h} V ${this.pathPoints.v2}`;
         this.canvasContext = this.element.getContext('2d');
         this.canvasContext.fillStyle = `rgb(${landColor.r}, ${landColor.g}, ${landColor.b})`;
         this.canvasContext.fill(new Path2D(path));
         mainContainer.appendChild(this.element);
+    }
+
+    getPathPoints(){
+        let withBetweenMountains = 100;
+        let startPoint = {x: 0, y: this.size.height / 1.6};
+        this.pathPoints = {};
+        this.pathPoints.startPoint = startPoint;
+        this.pathPoints.q = {
+            x: withBetweenMountains + " " + startPoint.y / 3,
+            y: withBetweenMountains * 2 + " " + (startPoint.y / 2 + 100)
+        };
+
+        this.pathPoints.t = [];
+        this.pathPoints.t.push({ x: withBetweenMountains * 4, y: startPoint.y / 2 });
+        this.pathPoints.t.push({ x: withBetweenMountains * 6, y: startPoint.y / 2 + Utils.getRandomInt(0, 30) });
+        this.pathPoints.t.push({ x: withBetweenMountains * 8, y: startPoint.y / 2 });
+        this.pathPoints.t.push({ x: withBetweenMountains * 10, y: startPoint.y / 2 - Utils.getRandomInt(0, 30) });
+        this.pathPoints.t.push({ x: withBetweenMountains * 12, y: startPoint.y / 2 });
+        this.pathPoints.t.push({ x: withBetweenMountains * 14, y: startPoint.y / 2 + Utils.getRandomInt(0, 30) });
+        this.pathPoints.t.push({ x: withBetweenMountains * 16, y: startPoint.y / 2 });
+        this.pathPoints.t.push({ x: withBetweenMountains * 18, y: startPoint.y / 2 - Utils.getRandomInt(0, 30) });
+        this.pathPoints.t.push({ x: withBetweenMountains * 20, y: startPoint.y / 2 });
+        this.pathPoints.v1 = this.size.height;
+        this.pathPoints.h = 0;
+        this.pathPoints.v2 = startPoint.x;
     }
 
     findAvailablePositions(){
