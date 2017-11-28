@@ -59,10 +59,10 @@ export class GameRoom {
         this.wind = new Wind();
         this.millsManager = new MillsManager(this);
         this.clouds.forEach(cloud => cloud.setup());
+        this.sky.draw();
         this.land.setup(pathPoints);
         this.gameScore.draw();
         this.sun.setup();
-        this.sky.draw();
         this.millsManager.setup();
     }
 
@@ -72,6 +72,14 @@ export class GameRoom {
 
     getSky(){
         return this.sky;
+    }
+
+    getWind(){
+        return this.wind;
+    }
+
+    getSun(){
+        return this.sun;
     }
 
     getGameConnectionStream(){

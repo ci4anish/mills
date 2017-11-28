@@ -2,11 +2,11 @@ import { mainController } from "./MainController";
 
 export const WindListenerMixin = (superclass) => class extends superclass {
     getWindStream(){
-        return mainController.gameRoom.wind.getStream();
+        return mainController.gameRoom.getWind().getStream();
     }
 
     listenToWind(){
-        this.blowSubscription = mainController.gameRoom.wind.getStream().subscribe(this.move.bind(this));
+        this.blowSubscription = mainController.gameRoom.getWind().getStream().subscribe(this.move.bind(this));
     }
 
     move(powerKoef){
@@ -19,6 +19,6 @@ export const WindListenerMixin = (superclass) => class extends superclass {
     }
 
     getWindPower(weight, position){
-        this.windPower = mainController.gameRoom.wind.getPowerInPoint(position) / weight;
+        this.windPower = mainController.gameRoom.getWind().getPowerInPoint(position) / weight;
     }
 };
