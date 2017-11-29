@@ -1,22 +1,8 @@
 const Wind = require("./Wind");
 const Sun = require("./Sun");
+const MillsManager = require("./MillsManager");
+const Player = require("./Player");
 
-class Player {
-    constructor(socket, name, id){
-        this.score = 0;
-        this.socket = socket;
-        this.name = name;
-        this.id = id;
-    }
-
-    addScore(score){
-        this.score += score;
-    }
-
-    getScore(){
-        return this.score;
-    }
-}
 
 module.exports = class GameRoom {
 
@@ -32,15 +18,18 @@ module.exports = class GameRoom {
         this.listenerSocket = listenerSocket;
         this.wind = new Wind();
         this.sun = new Sun();
+        //this.millsManager = new MillsManager(this);
         this.createPlayers();
         this.setListeners();
-        this.listenerSocket.emit("connect-game", this.config);
+        let config = { pathPoints: this.config.pathPoints, playerId: this.playerListener.getId() };
+        this.listenerSocket.emit("connect-game", config);
+        this.masterSocket.emit("send-player-id", this.playerMaster.getId());
 
     }
 
     createPlayers(){
-        this.player1 = new Player(this.masterSocket, "Player1", this.generateId());
-        this.player2 = new Player(this.listenerSocket, "Player2", this.generateId());
+        this.playerMaster = new Player("Player1", this.generateId());
+        this.playerListener = new Player("Player2", this.generateId());
     }
 
     setListeners(){

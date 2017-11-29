@@ -8,6 +8,8 @@ import { GameScore } from "./GameScore";
 import { Sun } from "./Sun";
 import { MillsManager } from "./MillsManager";
 import { Wind } from "./Wind";
+import { Player } from "./Player";
+import Utils from "../utils";
 
 export class GameRoom {
     constructor(){
@@ -18,7 +20,10 @@ export class GameRoom {
         return Observable.create((observer) => {
             observer.next("Creating game");
             this.setUpElements();
-            let config = { pathPoints: this.land.getPathPoints() };
+            let config = {
+                pathPoints: this.land.getPathPoints(),
+                availablePositions: Utils.mapToString(this.land.getAvailablePositions())
+            };
             socket.emit("create-game", config);
             observer.next("Waiting for player2...");
             let subscription = this.syncStream.subscribe(() => {
@@ -51,6 +56,7 @@ export class GameRoom {
         this.gameScore = new GameScore();
         this.sun = new Sun(this);
         this.millsManager = new MillsManager(this);
+        this.players = [new Player(this), new Player(this)];
         this.clouds.forEach(cloud => cloud.setup());
         this.sky.draw();
         this.land.setup(pathPoints);
@@ -81,7 +87,16 @@ export class GameRoom {
 
     onGameConnected(config){
         this.setUpElements(config.pathPoints);
+        this.playerId = config.playerId;
         socket.emit("connected");
+    }
+
+    setPlayerId(id){
+        this.playerId = id;
+    }
+
+    getPlayerId(){
+        return this.playerId;
     }
 
     destroy(){

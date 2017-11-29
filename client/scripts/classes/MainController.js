@@ -22,6 +22,7 @@ export class MainController {
         this.overlay.appendChild(this.textField);
         mainContainer.appendChild(this.overlay);
         this.onConnectGameListener = this.onConnectGame.bind(this);
+        this.onReceivePlayerIdListener = this.onReceivePlayerId.bind(this);
         this.onSynchronizeGameListener = this.onSynchronizeGame.bind(this);
         this.onEndGameListener = this.onEndGame.bind(this);
     }
@@ -53,10 +54,12 @@ export class MainController {
 
     listenToGameSocket(){
         socket.on("connect-game", this.onConnectGameListener);
+        socket.on("send-player-id", this.onReceivePlayerIdListener);
         socket.on("synchronize-game", this.onSynchronizeGameListener);
         socket.on("end-game", this.onEndGameListener);
         socket.on('disconnect', function(socket){
             socket.removeListener("connect-game", this.onConnectGameListener);
+            socket.removeListener("send-player-id", this.onReceivePlayerIdListener);
             socket.removeListener("synchronize-game", this.onSynchronizeGameListener);
             socket.removeListener("end-game", this.onEndGameListener);
         });
@@ -68,7 +71,11 @@ export class MainController {
         this.gameRoom.onGameConnected(config);
     }
 
-    onSynchronizeGame (config){
+    onReceivePlayerId(id){
+        this.gameRoom.setPlayerId(id);
+    }
+
+    onSynchronizeGame (){
         if(this.creatingGame){
             this.creatingGame = false;
             this.gameRoom.getSyncStream().next(true);
@@ -77,7 +84,7 @@ export class MainController {
         this.close();
     }
 
-    onEndGame (config){
+    onEndGame (){
         this.creatingGame = false;
         if(this.gameRoomObservableSubscription){
             this.gameRoomObservableSubscription.unsubscribe();

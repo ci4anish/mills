@@ -1,5 +1,4 @@
 import { Mill } from "./Mill";
-import { landPadding } from "../constants";
 import Utils from "../utils"
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/merge';
@@ -27,7 +26,6 @@ class MillsPull {
 
 export class MillsManager {
     constructor(gameRoom){
-        this.padding = landPadding;
         this.availableIds = [];
         this.gameRoom = gameRoom;
     }
