@@ -27,6 +27,7 @@ export class Mill extends EnergyGatherer {
         this.setPropertiesToDefault();
 
         this.energyStream = new Subject();
+        this.energyGatheredStream = new Subject();
     }
 
     setup(millConfig){
@@ -41,11 +42,13 @@ export class Mill extends EnergyGatherer {
         this.draw();
         this.listenToSources();
         this.listenClickEvent();
-        this.millDestroyedStreamSunscription = this.gameRoom.mainController.getMillDestroyedStream()
+        this.allMillsDestroyedSunscription = this.gameRoom.mainController.getAllMillsDestroyStream().subscribe(this.destroy.bind(this));
+        this.energyGatheredStreamSubscription = Observable.merge(this.gameRoom.mainController.getMillEnergyGatheredStream(), this.energyGatheredStream)
                                                 .filter(posId => posId === this.posId)
-                                                .subscribe(this.destroy.bind(this));
-        this.allMillsDestroydStreamSunscription = this.gameRoom.mainController.getAllMillsDestroyStream()
-                                                .subscribe(this.destroy.bind(this));
+                                                .subscribe(() => {
+                                                    this.energy = 0;
+                                                    this.updateEnergyBar();
+                                                });
     }
 
 
@@ -71,8 +74,8 @@ export class Mill extends EnergyGatherer {
                     comboFactor = 2;
                     energy = this.energy / comboFactor;
                 }
-                this.energy = 0;
-                this.updateEnergyBar();
+                this.gameRoom.mainController.emitEvent("mill-energy-gathered", { posId: this.posId });
+                this.energyGatheredStream.next(this.posId);
                 return { energy, comboFactor };
             })
             .subscribe(this.energyStream);
@@ -164,8 +167,8 @@ export class Mill extends EnergyGatherer {
         this.clickStreamSubscription.unsubscribe();
         this.unsubscribeFromSources();
         this.manager.recycleMill(this);
-        this.millDestroyedStreamSunscription.unsubscribe();
-        this.allMillsDestroydStreamSunscription.unsubscribe();
+        this.allMillsDestroyedSunscription.unsubscribe();
+        this.energyGatheredStreamSubscription.unsubscribe();
     }
 
     destroyWithEmit(){

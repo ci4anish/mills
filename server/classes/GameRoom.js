@@ -2,6 +2,7 @@ const Wind = require("./Wind");
 const Sun = require("./Sun");
 const MillsManager = require("./MillsManager");
 const Player = require("./Player");
+const RxSocketPair = require("./RxSocketPair");
 
 const Subject = require('rxjs/Subject').Subject;
 const Observable = require('rxjs/Observable').Observable;
@@ -57,15 +58,15 @@ module.exports = class GameRoom {
             this.gameStartedStream.next();
         };
         this.listenerSocket.on("connected", onConnected);
-        this.millDestroyPlayer1Stream = Observable.fromEvent(this.masterSocket, "mill-destroy");
-        this.millDestroyPlayer2Stream = Observable.fromEvent(this.listenerSocket, "mill-destroy");
-        this.millDestroyStream = Observable.merge(this.millDestroyPlayer1Stream, this.millDestroyPlayer2Stream);
-        this.millDestroyPlayer1Subscription = this.millDestroyPlayer1Stream.map((millConfig) => millConfig.posId).subscribe((posId) => {
-            this.listenerSocket.emit("mill-destroyed", posId);
-        });
-        this.millDestroyPlayer2Subscription = this.millDestroyPlayer2Stream.map((millConfig) => millConfig.posId).subscribe((posId) => {
-            this.masterSocket.emit("mill-destroyed", posId);
-        });
+
+        this.rxMasterSocketPair = new RxSocketPair(this.masterSocket, this.listenerSocket);
+        this.rxMasterSocketPair.listenToEventAndEmit("mill-energy-gathered", (millConfig) => millConfig.posId);
+        // this.rxMasterSocketPair.listenToEventAndEmit("mill-score-updated");
+
+        this.millDestroyStream = Observable.merge(
+            Observable.fromEvent(this.masterSocket, "mill-destroy"),
+            Observable.fromEvent(this.listenerSocket, "mill-destroy")
+        );
     }
 
     mapEvent(event){
@@ -101,14 +102,14 @@ module.exports = class GameRoom {
             this.sunEventSubscription.unsubscribe();
             this.sunEventChangeSubscription.unsubscribe();
             this.gameStartedStream.unsubscribe();
-            this.millDestroyPlayer1Subscription.unsubscribe();
-            this.millDestroyPlayer2Subscription.unsubscribe();
+            this.rxMasterSocketPair.destroy();
             this.wind.destroy();
             this.sun.destroy();
             this.millsManager.destroy();
             this.wind = undefined;
             this.sun = undefined;
             this.millsManager = undefined;
+            this.rxMasterSocketPair = undefined;
         }
         this.setupFinished = false;
     }

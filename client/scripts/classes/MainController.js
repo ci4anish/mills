@@ -40,8 +40,7 @@ export class MainController {
         socket.on("send-player-id", this.onReceivePlayerIdListener);
         socket.on("synchronize-game", this.onSynchronizeGameListener);
         socket.on("add-mill", this.onAddMillListener);
-        this.millDestroyedStream = Observable.fromEvent(socket, "mill-destroyed").multicast(() => new ReplaySubject(1));
-        socket.on("", this.onAddMillListener);
+        this.millEnergyGatheredStream = Observable.fromEvent(socket, "mill-energy-gathered").multicast(new ReplaySubject(1)).refCount();
         socket.on("end-game", this.onEndGameListener);
         // socket.on('disconnect', function(socket){
         //     socket.removeListener("connect-game", this.onConnectGameListener);
@@ -51,12 +50,12 @@ export class MainController {
         // });
     }
 
-    getMillDestroyedStream(){
-        return this.millDestroyedStream;
-    }
-
     getAllMillsDestroyStream(){
         return this.allMillsDestroyStream;
+    }
+
+    getMillEnergyGatheredStream(){
+        return this.millEnergyGatheredStream;
     }
 
     onConnectGame (config){
