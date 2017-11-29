@@ -11,33 +11,27 @@ import { Wind } from "./Wind";
 
 export class GameRoom {
     constructor(){
-        this.gameConnectionStream = new ReplaySubject(1);
+        this.syncStream = new ReplaySubject(1);
     }
 
     createGame(){
-
         return Observable.create((observer) => {
             observer.next("Creating game");
             this.setUpElements();
             let config = { pathPoints: this.land.getPathPoints() };
             socket.emit("create-game", config);
             observer.next("Waiting for player2...");
-
-
-            // observer.next(2);
-            // observer.next(3);
-            // setTimeout(() => {
-            //     console.log("Destroy");
-            //     this.land.destroy();
-                // observer.next(4);
-                // observer.complete();
-            // }, 3000);
+            let subscription = this.syncStream.subscribe(() => {
+                observer.complete();
+                subscription.unsubscribe();
+            });
         });
     }
 
     setUpElements(pathPoints){
         this.land = new Land();
         this.sky = new Sky();
+        this.wind = new Wind();
         this.clouds = [
             new Cloud({x: 50, y: 135}),
             new Cloud({x: 200, y: 50}),
@@ -56,7 +50,6 @@ export class GameRoom {
         ];
         this.gameScore = new GameScore();
         this.sun = new Sun(this);
-        this.wind = new Wind();
         this.millsManager = new MillsManager(this);
         this.clouds.forEach(cloud => cloud.setup());
         this.sky.draw();
@@ -82,7 +75,22 @@ export class GameRoom {
         return this.sun;
     }
 
-    getGameConnectionStream(){
-        return this.gameConnectionStream;
+    getSyncStream(){
+        return this.syncStream;
+    }
+
+    onGameConnected(config){
+        this.setUpElements(config.pathPoints);
+        socket.emit("connected");
+    }
+
+    destroy(){
+        this.land.destroy();
+        this.sky.destroy();
+        this.wind.destroy();
+        this.gameScore.destroy();
+        this.sun.destroy();
+        // this.millsManager.destroy();
+        this.clouds.forEach(cloud => cloud.destroy());
     }
 }

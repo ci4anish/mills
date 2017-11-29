@@ -87,7 +87,7 @@ export class Sun extends EventEmmiter {
     setup(){
         this.draw();
         this.setServerListener();
-        this.socketEvent.subscribe((e) => {
+        this.socketEventSubscription = this.socketEvent.subscribe((e) => {
             if(e.active){
                 this.eventStream.next(e.powerKoef);
             }
@@ -157,9 +157,10 @@ export class Sun extends EventEmmiter {
 
     destroy(){
         super.destroy();
+        this.socketEventSubscription.unsubscribe();
         this.sunRaysOuter = undefined;
         this.sunRaysInner = undefined;
         Utils.removeElement(this.body);
-        Utils.removeElement(this.sunRaysBackground);
+        Utils.removeElement(this.sunRaysBackground.node());
     }
 }

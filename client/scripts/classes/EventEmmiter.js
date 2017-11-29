@@ -21,7 +21,6 @@ export class EventEmmiter {
     onEventChanged(e){}
 
     destroy(){
-        this.socketEvent.unsubscribe();
         socket.removeListener(this.constructor.name + " changed", this.eventChangeListener);
     }
 }

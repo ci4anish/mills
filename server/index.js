@@ -27,11 +27,19 @@ io.on('connection', function(socket){
         console.log('user disconnected');
         activeSockets.splice(activeSockets.indexOf(socket), 1);
         activeSocketsStream.next(activeSockets);
+        if(gameRoom){
+            gameRoom.destroy();
+            gameRoom = undefined;
+            activeSocketsSubscription.unsubscribe();
+        }
     });
 
     socket.on("create-game", (config) => {
         console.log('create game event');
-        gameRoom = new GameRoom(io, config, socket);
+        gameRoom = new GameRoom(config, socket);
+        if(activeSockets.length === 2){
+            activeSocketsStream.next(activeSockets);
+        }
         activeSocketsSubscription = activeSocketsStream
             .filter((sockets => sockets.length === 2))
             .map((sockets => sockets.find(s => s !== socket)))

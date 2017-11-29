@@ -16,7 +16,9 @@ export class Land {
         this.element.style.top = skyHeight + "px";
         this.element.setAttribute("width", this.size.width + "px");
         this.element.setAttribute("height", this.size.height + "px");
-        this.pathPoints = this.pathPoints || this.getPathPoints();
+        if(!this.pathPoints){
+            this.pathPoints = this.calculatePathPoints();
+        }
 
         let path = `M${this.pathPoints.startPoint.x} ${this.pathPoints.startPoint.y}
                     Q ${this.pathPoints.q.x} ${this.pathPoints.q.y}`;
@@ -32,7 +34,7 @@ export class Land {
         mainContainer.appendChild(this.element);
     }
 
-    getPathPoints(){
+    calculatePathPoints(){
         let withBetweenMountains = 100;
         let startPoint = {x: 0, y: this.size.height / 1.6};
         let pathPoints = {};
