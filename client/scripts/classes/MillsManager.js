@@ -72,7 +72,6 @@ export class MillsManager {
         let mill = this.millsPull.get();
         mill.setup(millConfig);
         mill.create();
-
     }
 
     recycleMill(mill){

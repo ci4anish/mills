@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/merge';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 
 export class Mill extends EnergyGatherer {
@@ -39,6 +40,9 @@ export class Mill extends EnergyGatherer {
         this.draw();
         this.listenToSources();
         this.listenClickEvent();
+        this.millDestroyedStreamSunscription = this.gameRoom.mainController.getMillDestroyedStream()
+                                                .filter(posId => posId === this.posId)
+                                                .subscribe(this.destroy.bind(this));
     }
 
 
@@ -150,6 +154,10 @@ export class Mill extends EnergyGatherer {
         this.clickStreamSubscription.unsubscribe();
         this.unsubscribeFromSources();
         this.manager.recycleMill(this);
+        if(this.isPlayers){
+            this.gameRoom.mainController.emitEvent("mill-destroy", { position: this.position, posId: this.posId });
+        }
+        this.millDestroyedStreamSunscription.unsubscribe();
     }
 
     setPropertiesToDefault(){

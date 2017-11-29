@@ -3,13 +3,15 @@ const Sun = require("./Sun");
 const MillsManager = require("./MillsManager");
 const Player = require("./Player");
 const Subject = require('rxjs/Subject').Subject;
+const Observable = require('rxjs/Observable').Observable;
+require('rxjs/add/observable/fromEvent');
+require('rxjs/add/observable/merge');
 
 module.exports = class GameRoom {
 
     constructor(config, masterSocket){
         this.config = config;
         this.masterSocket = masterSocket;
-        this.eventEmmiter = this.emitEvent.bind(this);
         this.startGameListener = this.startGame.bind(this);
         this.id = 1;
 
@@ -22,6 +24,7 @@ module.exports = class GameRoom {
         this.millsManager = new MillsManager(this);
         this.createPlayers();
         this.setListeners();
+        this.millsManager.listenToMillDestroy(this.millDestroyStream);
         let config = { pathPoints: this.config.pathPoints, playerId: this.playerListener.getId() };
         this.listenerSocket.emit("connect-game", config);
         this.masterSocket.emit("send-player-id", this.playerMaster.getId());
@@ -37,10 +40,10 @@ module.exports = class GameRoom {
     }
 
     setListeners(){
-        this.windEventSubscription = this.wind.getEventStream().map(this.mapEvent).subscribe(this.eventEmmiter);
-        this.windEventChangeSubscription = this.wind.getEventChangeStream().map(this.mapEvent).subscribe(this.eventEmmiter);
-        this.sunEventSubscription = this.sun.getEventStream().map(this.mapEvent).subscribe(this.eventEmmiter);
-        this.sunEventChangeSubscription = this.sun.getEventChangeStream().map(this.mapEvent).subscribe(this.eventEmmiter);
+        this.windEventSubscription = this.wind.getEventStream().map(this.mapEvent).subscribe(this.emitEvent.bind(this));
+        this.windEventChangeSubscription = this.wind.getEventChangeStream().map(this.mapEvent).subscribe(this.emitEvent.bind(this));
+        this.sunEventSubscription = this.sun.getEventStream().map(this.mapEvent).subscribe(this.emitEvent.bind(this));
+        this.sunEventChangeSubscription = this.sun.getEventChangeStream().map(this.mapEvent).subscribe(this.emitEvent.bind(this));
         let onConnected = () => {
             this.emitEvent({
                 eName: "synchronize-game",
@@ -52,7 +55,16 @@ module.exports = class GameRoom {
             this.listenerSocket.removeListener("connected", onConnected);
             this.gameStartedStream.next();
         };
-        this.listenerSocket.on("connected", onConnected)
+        this.listenerSocket.on("connected", onConnected);
+        this.millDestroyPlayer1Stream = Observable.fromEvent(this.masterSocket, "mill-destroy");
+        this.millDestroyPlayer2Stream = Observable.fromEvent(this.listenerSocket, "mill-destroy");
+        this.millDestroyStream = Observable.merge(this.millDestroyPlayer1Stream, this.millDestroyPlayer2Stream);
+        this.millDestroyPlayer1Subscription = this.millDestroyPlayer1Stream.map((millConfig) => millConfig.posId).subscribe((posId) => {
+            this.listenerSocket.emit("mill-destroyed", posId);
+        });
+        this.millDestroyPlayer2Subscription = this.millDestroyPlayer2Stream.map((millConfig) => millConfig.posId).subscribe((posId) => {
+            this.masterSocket.emit("mill-destroyed", posId);
+        });
     }
 
     mapEvent(event){
@@ -66,6 +78,19 @@ module.exports = class GameRoom {
         this.masterSocket.emit(eName, event);
     }
 
+    startGame(){
+        this.millsManager.addMill(this.playerMaster.getId());
+        this.millsManager.addMill(this.playerListener.getId());
+        setInterval(() => {
+            this.millsManager.addMill(this.playerMaster.getId());
+            this.millsManager.addMill(this.playerListener.getId());
+        }, 15000);
+    }
+
+    generateId(){
+        return this.id++;
+    }
+
     destroy(){
         this.emitEvent({ eName: "end-game" });
         if(this.setupFinished){
@@ -74,18 +99,14 @@ module.exports = class GameRoom {
             this.sunEventSubscription.unsubscribe();
             this.sunEventChangeSubscription.unsubscribe();
             this.gameStartedStream.unsubscribe();
+            this.millDestroyPlayer1Subscription.unsubscribe();
+            this.millDestroyPlayer2Subscription.unsubscribe();
             this.wind.destroy();
             this.sun.destroy();
+            this.millsManager.destroy();
+            this.wind = undefined;
+            this.sun = undefined;
+            this.millsManager = undefined;
         }
-    }
-
-    startGame(){
-        setTimeout(() => {
-            this.millsManager.addMill();
-        }, 5000);
-    }
-
-    generateId(){
-        return this.id++;
     }
 };

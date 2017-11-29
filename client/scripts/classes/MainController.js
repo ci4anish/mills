@@ -1,6 +1,10 @@
 import { GameRoom } from "./GameRoom";
 import { Overlay } from "./Overlay";
 import { socket } from '../socket';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/multicast';
 
 export class MainController {
 
@@ -33,13 +37,19 @@ export class MainController {
         socket.on("send-player-id", this.onReceivePlayerIdListener);
         socket.on("synchronize-game", this.onSynchronizeGameListener);
         socket.on("add-mill", this.onAddMillListener);
+        this.millDestroyedStream = Observable.fromEvent(socket, "mill-destroyed").multicast(() => new ReplaySubject(1));
+        socket.on("", this.onAddMillListener);
         socket.on("end-game", this.onEndGameListener);
-        socket.on('disconnect', function(socket){
-            socket.removeListener("connect-game", this.onConnectGameListener);
-            socket.removeListener("send-player-id", this.onReceivePlayerIdListener);
-            socket.removeListener("synchronize-game", this.onSynchronizeGameListener);
-            socket.removeListener("end-game", this.onEndGameListener);
-        });
+        // socket.on('disconnect', function(socket){
+        //     socket.removeListener("connect-game", this.onConnectGameListener);
+        //     socket.removeListener("send-player-id", this.onReceivePlayerIdListener);
+        //     socket.removeListener("synchronize-game", this.onSynchronizeGameListener);
+        //     socket.removeListener("end-game", this.onEndGameListener);
+        // });
+    }
+
+    getMillDestroyedStream(){
+        return this.millDestroyedStream;
     }
 
     onConnectGame (config){
