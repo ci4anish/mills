@@ -29,7 +29,6 @@ io.on('connection', function(socket){
         activeSocketsStream.next(activeSockets);
         if(gameRoom){
             gameRoom.destroy();
-            gameRoom = undefined;
             activeSocketsSubscription.unsubscribe();
         }
     });
@@ -43,7 +42,10 @@ io.on('connection', function(socket){
         activeSocketsSubscription = activeSocketsStream
             .filter((sockets => sockets.length === 2))
             .map((sockets => sockets.find(s => s !== socket)))
-            .subscribe(listenerSocket => gameRoom.setup(listenerSocket));
+            .subscribe(listenerSocket => {
+                console.log("gameRoom setup");
+                gameRoom.setup(listenerSocket)
+            });
     });
 });
 
