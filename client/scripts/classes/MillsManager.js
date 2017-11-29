@@ -26,12 +26,11 @@ class MillsPull {
 
 export class MillsManager {
     constructor(gameRoom){
-        this.availableIds = [];
         this.gameRoom = gameRoom;
     }
 
     setup(){
-        this.availablePositions = this.gameRoom.land.getAvailablePositions();
+        this.availablePositions = this.gameRoom.getLand().getAvailablePositions();
         this.createPull();
         this.subscribeOnClicks();
     }
@@ -69,29 +68,14 @@ export class MillsManager {
             });
     }
 
-    addMill(){
-        if(this.availablePositions.size === 0){
-            return false;
-        }
-
-        this.availableIds.splice(0, this.availableIds.length);
-
-        // цикл по ключам
-        for(let id of this.availablePositions.keys()) {
-            this.availableIds.push(id);
-        }
-
-        let posId = this.availableIds[Utils.getRandomInt(0, this.availableIds.length - 1)];
-        let position = this.availablePositions.get(posId);
+    addMill(millConfig){
         let mill = this.millsPull.get();
-        mill.setup(position, posId);
+        mill.setup(millConfig);
         mill.create();
-        this.availablePositions.delete(posId);
 
     }
 
     recycleMill(mill){
-        this.availablePositions.set(mill.posId, mill.position);
         this.millsPull.set(mill);
     }
 }

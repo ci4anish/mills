@@ -113,4 +113,10 @@ export class GameRoom {
         // this.millsManager.destroy();
         this.clouds.forEach(cloud => cloud.destroy());
     }
+
+    onAddMill(millConfig){
+        millConfig.isPlayers = this.playerId === millConfig.playerId;
+        delete millConfig.playerId;
+        this.millsManager.addMill(millConfig);
+    }
 }

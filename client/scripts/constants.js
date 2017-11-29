@@ -7,7 +7,8 @@ export const landColor = { r: 122, g: 212, b: 97 };
 
 export const millParams = {
     millSize: { width: 60, height: 90 },
-    millBodyColor: "#c59d6e",
+    millBodyPlayersColor: "#c57e52",
+    millBodyOpponentColor: "#bfc501",
     millWingColor: "#753b3b",
     weight: 15
 };

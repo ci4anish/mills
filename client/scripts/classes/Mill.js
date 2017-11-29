@@ -27,11 +27,12 @@ export class Mill extends EnergyGatherer {
         this.energyStream = new Subject();
     }
 
-    setup(pos, posId){
+    setup(millConfig){
         this.setPropertiesToDefault();
-        this.posId = posId;
-        this.position = pos;
-        this.getWindPower(this.weight, pos);
+        this.posId = millConfig.posId;
+        this.position = millConfig.position;
+        this.isPlayers = millConfig.isPlayers;
+        this.getWindPower(this.weight, this.position);
     }
 
     create() {
@@ -95,7 +96,7 @@ export class Mill extends EnergyGatherer {
         ];
         this.millBody = this.millContainer.append("path")
             .attr("d", this.lineFunction(millBodyData) + " Z")
-            .attr("fill", this.params.millBodyColor);
+            .attr("fill", this.isPlayers ? this.params.millBodyPlayersColor : this.params.millBodyOpponentColor);
     }
 
     transformFn (deg) {

@@ -9,6 +9,7 @@ export class MainController {
         this.onConnectGameListener = this.onConnectGame.bind(this);
         this.onReceivePlayerIdListener = this.onReceivePlayerId.bind(this);
         this.onSynchronizeGameListener = this.onSynchronizeGame.bind(this);
+        this.onAddMillListener = this.onAddMill.bind(this);
         this.onEndGameListener = this.onEndGame.bind(this);
     }
 
@@ -31,6 +32,7 @@ export class MainController {
         socket.on("connect-game", this.onConnectGameListener);
         socket.on("send-player-id", this.onReceivePlayerIdListener);
         socket.on("synchronize-game", this.onSynchronizeGameListener);
+        socket.on("add-mill", this.onAddMillListener);
         socket.on("end-game", this.onEndGameListener);
         socket.on('disconnect', function(socket){
             socket.removeListener("connect-game", this.onConnectGameListener);
@@ -58,6 +60,10 @@ export class MainController {
         this.gameRoom.setUpPlayers(players);
         this.overlay.setTextField("Synchronized");
         this.overlay.close();
+    }
+
+    onAddMill(millConfig){
+        this.gameRoom.onAddMill(millConfig);
     }
 
     onEndGame (){

@@ -16,7 +16,9 @@ app.get('*', function(req, res){
 
 const io = require('socket.io')(server);
 
-let activeSockets = [], gameRoom, activeSocketsStream = new ReplaySubject(1), activeSocketsSubscription;
+let gameRoom, activeSocketsSubscription;
+let activeSockets = [];
+let activeSocketsStream = new ReplaySubject(1);
 
 io.on('connection', function(socket){
     activeSockets.push(socket);
