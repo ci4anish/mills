@@ -52,19 +52,19 @@ export class MillsManager {
                 last.shift();
                 last.push(current);
                 return last
-            }, [0, 0, 0])
+            }, [{ energy: 0, comboFactor: 1 }, { energy: 0, comboFactor: 1 }, { energy: 0, comboFactor: 1 }])
             .subscribe(energies => {
-                let lastThreeSum = energies.reduce((x, y) => x + y);
+                let lastThreeSum = energies.reduce((x, y) => x + y.energy * y.comboFactor, 0);
                 let lastClicked = energies[energies.length - 1];
-                let score = Math.floor(lastClicked);
-
+                let score = Math.floor(lastClicked.energy);
                 if(Math.ceil(lastThreeSum) > 270 && comboCounter <= 0){
                     comboCounter = 2;
-                    this.gameRoom.gameScore.setComboScore(score, 3);
+                    this.gameRoom.getPlayer().addScore(score, 3);
                 }else{
                     comboCounter--;
-                    this.gameRoom.gameScore.setScore(score);
+                    this.gameRoom.getPlayer().addScore(score);
                 }
+
             });
     }
 

@@ -11,8 +11,12 @@ export class Player {
         this.main = this.id === this.gameRoom.getPlayerId();
     }
 
-    addScore(score){
-        this.score += score;
+    addScore(score, combo = 1){
+        this.score += score * combo;
+        console.log("Player", this.name);
+        console.log("Score", this.score);
+        console.log("Score total", score);
+        console.log("Combo", combo > 1);
     }
 
     getScore(){
@@ -25,9 +29,5 @@ export class Player {
 
     getName(){
         return this.name;
-    }
-
-    setMain(){
-        this.main = true;
     }
 }

@@ -62,10 +62,17 @@ export class Mill extends EnergyGatherer {
 
         this.clickStreamSubscription = Observable.merge(bodyClickStream, hMillWingClickStream, vMillWingClickStream)
             .map(_event => {
-                let e = this.energy;
+                let comboFactor = 1;
+                let energy;
+                if(this.isPlayers){
+                    energy = this.energy;
+                }else{
+                    comboFactor = 2;
+                    energy = this.energy / comboFactor;
+                }
                 this.energy = 0;
                 this.updateEnergyBar();
-                return e;
+                return { energy, comboFactor };
             })
             .subscribe(this.energyStream);
     }

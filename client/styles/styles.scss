@@ -111,6 +111,13 @@ body{
     position: absolute;
 }
 
+#land{
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
+}
+
 .full-screen{
     left: 0;
     right: 0;

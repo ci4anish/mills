@@ -26,9 +26,8 @@ export class GameRoom {
             };
             this.mainController.emitEvent("create-game", config);
             observer.next("Waiting for player2...");
-            let subscription = this.syncStream.subscribe(() => {
+            this.syncStreamSubscription = this.syncStream.subscribe(() => {
                 observer.complete();
-                subscription.unsubscribe();
             });
         });
     }
@@ -102,6 +101,11 @@ export class GameRoom {
     setUpPlayers(players){
         this.players[0].setup(players.player1);
         this.players[1].setup(players.player2);
+        this.player = this.players.find(player => player.main);
+    }
+
+    getPlayer(){
+        return this.player;
     }
 
     destroy(){
@@ -112,6 +116,9 @@ export class GameRoom {
         this.sun.destroy();
         this.millsManager.destroy();
         this.clouds.forEach(cloud => cloud.destroy());
+        if(this.syncStreamSubscription){
+            this.syncStreamSubscription.unsubscribe();
+        }
     }
 
     onAddMill(millConfig){
