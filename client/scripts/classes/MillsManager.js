@@ -1,5 +1,5 @@
 import { Mill } from "./Mill";
-import Utils from "../utils"
+
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/scan';

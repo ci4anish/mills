@@ -2,6 +2,7 @@ import { mainContainer, millParams } from "../constants";
 import { select as d3Select } from "d3-selection";
 import { line as d3Line } from "d3-shape";
 import { EnergyGatherer } from "./EnergyGatherer";
+
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/observable/fromEvent';

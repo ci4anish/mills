@@ -1,4 +1,5 @@
 const EventEmmiter = require("./EventEmmiter");
+
 const Observable = require('rxjs/Observable').Observable;
 const Subject = require('rxjs/Subject').Subject;
 require('rxjs/add/observable/interval');

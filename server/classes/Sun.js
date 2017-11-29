@@ -1,4 +1,5 @@
 const EventEmmiter = require("./EventEmmiter");
+
 const Subject = require('rxjs/Subject').Subject;
 
 module.exports = class Sun extends EventEmmiter {

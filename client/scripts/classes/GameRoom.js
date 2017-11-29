@@ -1,14 +1,15 @@
 import { Land } from "./Land";
 import { Sky } from "./Sky";
-import { Observable } from 'rxjs/Observable';
 import { Cloud } from "./Cloud";
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { GameScore } from "./GameScore";
 import { Sun } from "./Sun";
 import { MillsManager } from "./MillsManager";
 import { Wind } from "./Wind";
 import { Player } from "./Player";
 import Utils from "../utils";
+
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 export class GameRoom {
     constructor(mainController){

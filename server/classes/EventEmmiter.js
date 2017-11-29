@@ -1,4 +1,5 @@
 const Utils = require("../utils");
+
 const Subject = require('rxjs/Subject').Subject;
 
 module.exports = class EventEmmiter {

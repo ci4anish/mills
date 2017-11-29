@@ -1,6 +1,7 @@
 import { WindListenerMixin } from "./WindListenerMixin";
 import { SunListenerMixin } from "./SunListenerMixin";
 import { mix } from "./Mixin";
+
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/merge';
 
