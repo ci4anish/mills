@@ -5,9 +5,10 @@ import Utils from "../utils"
 
 export class Cloud extends mix(class Listener {}).with(WindListenerMixin){
 
-    constructor(pos) {
+    constructor(pos, gameRoom) {
         super();
         this.position = pos;
+        this.gameRoom = gameRoom;
         this.type = Cloud.types[Utils.getRandomInt(0, Cloud.types.length - 1)];
         this.priority = Cloud.drawPriorities[Utils.getRandomInt(0, 1)];
         this.getWindPower(this.type.weight, pos);

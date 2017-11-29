@@ -21,6 +21,7 @@ export class Mill extends EnergyGatherer {
         this.wingHeight = this.params.millSize.width / 4;
         this.wingWidth = this.params.millSize.width;
         this.manager = manager;
+        this.gameRoom = manager.gameRoom;
         this.setPropertiesToDefault();
 
         this.energyStream = new Subject();

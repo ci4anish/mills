@@ -33,20 +33,20 @@ export class GameRoom {
         this.sky = new Sky();
         this.wind = new Wind();
         this.clouds = [
-            new Cloud({x: 50, y: 135}),
-            new Cloud({x: 200, y: 50}),
-            new Cloud({x: 400, y: 180}),
-            new Cloud({x: 600, y: 250}),
-            new Cloud({x: 1100, y: 80}),
-            new Cloud({x: 900, y: 235}),
-            new Cloud({x: 1200, y: 150}),
-            new Cloud({x: -50, y: 166}),
-            new Cloud({x: 1100, y: 300}),
-            new Cloud({x: 500, y: 166}),
-            new Cloud({x: 700, y: 400}),
-            new Cloud({x: 800, y: 260}),
-            new Cloud({x: 300, y: 370}),
-            new Cloud({x: -750, y: 420}),
+            new Cloud({x: 50, y: 135}, this),
+            new Cloud({x: 200, y: 50}, this),
+            new Cloud({x: 400, y: 180}, this),
+            new Cloud({x: 600, y: 250}, this),
+            new Cloud({x: 1100, y: 80}, this),
+            new Cloud({x: 900, y: 235}, this),
+            new Cloud({x: 1200, y: 150}, this),
+            new Cloud({x: -50, y: 166}, this),
+            new Cloud({x: 1100, y: 300}, this),
+            new Cloud({x: 500, y: 166}, this),
+            new Cloud({x: 700, y: 400}, this),
+            new Cloud({x: 800, y: 260}, this),
+            new Cloud({x: 300, y: 370}, this),
+            new Cloud({x: -750, y: 420}, this),
         ];
         this.gameScore = new GameScore();
         this.sun = new Sun(this);

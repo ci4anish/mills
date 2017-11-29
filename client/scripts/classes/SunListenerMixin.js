@@ -1,12 +1,11 @@
-import { mainController } from "./MainController";
 
 export const SunListenerMixin = (superclass) => class extends superclass {
     getSunStream(){
-        return mainController.gameRoom.getSun().getStream();
+        return this.gameRoom.getSun().getStream();
     }
 
     listenToSun(){
-        this.sunSubscription = mainController.gameRoom.getSun().getStream().subscribe(this.move.bind(this));
+        this.sunSubscription = this.gameRoom.getSun().getStream().subscribe(this.move.bind(this));
     }
 
     move(powerKoef){
