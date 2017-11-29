@@ -1,7 +1,6 @@
 import { Land } from "./Land";
 import { Sky } from "./Sky";
 import { Observable } from 'rxjs/Observable';
-import { socket } from '../socket';
 import { Cloud } from "./Cloud";
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { GameScore } from "./GameScore";
@@ -12,7 +11,8 @@ import { Player } from "./Player";
 import Utils from "../utils";
 
 export class GameRoom {
-    constructor(){
+    constructor(mainController){
+        this.mainController = mainController;
         this.syncStream = new ReplaySubject(1);
     }
 
@@ -24,7 +24,7 @@ export class GameRoom {
                 pathPoints: this.land.getPathPoints(),
                 availablePositions: Utils.mapToString(this.land.getAvailablePositions())
             };
-            socket.emit("create-game", config);
+            this.mainController.emitEvent("create-game", config);
             observer.next("Waiting for player2...");
             let subscription = this.syncStream.subscribe(() => {
                 observer.complete();
@@ -88,7 +88,7 @@ export class GameRoom {
     onGameConnected(config){
         this.setUpElements(config.pathPoints);
         this.playerId = config.playerId;
-        socket.emit("connected");
+        this.mainController.emitEvent("connected");
     }
 
     setPlayerId(id){

@@ -5,7 +5,7 @@ import { socket } from '../socket';
 export class MainController {
 
     constructor(){
-        this.gameRoom = new GameRoom();
+        this.gameRoom = new GameRoom(this);
     }
 
     draw(){
@@ -100,6 +100,10 @@ export class MainController {
 
     open(){
         this.overlay.style.top = 0;
+    }
+
+    emitEvent(name, event){
+        socket.emit(name, event);
     }
 
 }
