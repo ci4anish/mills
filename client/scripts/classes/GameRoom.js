@@ -110,7 +110,7 @@ export class GameRoom {
         this.wind.destroy();
         this.gameScore.destroy();
         this.sun.destroy();
-        // this.millsManager.destroy();
+        this.millsManager.destroy();
         this.clouds.forEach(cloud => cloud.destroy());
     }
 

@@ -47,7 +47,7 @@ export class MillsManager {
         });
         let comboCounter = 0;
 
-        Observable.merge(...streams)
+        this.clicksStreamSubscription = Observable.merge(...streams)
             .scan((last, current) => {
                 last.shift();
                 last.push(current);
@@ -76,5 +76,10 @@ export class MillsManager {
 
     recycleMill(mill){
         this.millsPull.set(mill);
+    }
+
+    destroy(){
+        this.millsPull = undefined;
+        this.clicksStreamSubscription.unsubscribe();
     }
 }

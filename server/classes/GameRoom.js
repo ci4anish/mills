@@ -81,7 +81,7 @@ module.exports = class GameRoom {
     startGame(){
         this.millsManager.addMill(this.playerMaster.getId());
         this.millsManager.addMill(this.playerListener.getId());
-        setInterval(() => {
+        this.millsAddInterval = setInterval(() => {
             this.millsManager.addMill(this.playerMaster.getId());
             this.millsManager.addMill(this.playerListener.getId());
         }, 15000);
@@ -93,6 +93,7 @@ module.exports = class GameRoom {
 
     destroy(){
         this.emitEvent({ eName: "end-game" });
+        clearInterval(this.millsAddInterval);
         if(this.setupFinished){
             this.windEventSubscription.unsubscribe();
             this.windEventChangeSubscription.unsubscribe();
@@ -108,5 +109,6 @@ module.exports = class GameRoom {
             this.sun = undefined;
             this.millsManager = undefined;
         }
+        this.setupFinished = false;
     }
 };

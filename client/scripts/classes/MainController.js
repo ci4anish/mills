@@ -2,6 +2,7 @@ import { GameRoom } from "./GameRoom";
 import { Overlay } from "./Overlay";
 import { socket } from '../socket';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/multicast';
@@ -15,6 +16,7 @@ export class MainController {
         this.onSynchronizeGameListener = this.onSynchronizeGame.bind(this);
         this.onAddMillListener = this.onAddMill.bind(this);
         this.onEndGameListener = this.onEndGame.bind(this);
+        this.allMillsDestroyStream = new Subject();
     }
 
     setup(){
@@ -52,6 +54,10 @@ export class MainController {
         return this.millDestroyedStream;
     }
 
+    getAllMillsDestroyStream(){
+        return this.allMillsDestroyStream;
+    }
+
     onConnectGame (config){
         this.overlay.toTextMode();
         this.overlay.setTextField("Synchronizing game...");
@@ -81,6 +87,7 @@ export class MainController {
         if(this.gameRoomObservableSubscription){
             this.gameRoomObservableSubscription.unsubscribe();
         }
+        this.allMillsDestroyStream.next();
         this.gameRoom.destroy();
         this.overlay.toBtnMode();
         this.overlay.open();

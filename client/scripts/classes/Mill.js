@@ -43,6 +43,8 @@ export class Mill extends EnergyGatherer {
         this.millDestroyedStreamSunscription = this.gameRoom.mainController.getMillDestroyedStream()
                                                 .filter(posId => posId === this.posId)
                                                 .subscribe(this.destroy.bind(this));
+        this.allMillsDestroydStreamSunscription = this.gameRoom.mainController.getAllMillsDestroyStream()
+                                                .subscribe(this.destroy.bind(this));
     }
 
 
@@ -144,7 +146,7 @@ export class Mill extends EnergyGatherer {
         this.updateEnergyBar();
 
         if(this.energy >= this.maxEnergy){
-            this.destroy();
+            this.destroyWithEmit();
         }
     }
 
@@ -154,10 +156,15 @@ export class Mill extends EnergyGatherer {
         this.clickStreamSubscription.unsubscribe();
         this.unsubscribeFromSources();
         this.manager.recycleMill(this);
+        this.millDestroyedStreamSunscription.unsubscribe();
+        this.allMillsDestroydStreamSunscription.unsubscribe();
+    }
+
+    destroyWithEmit(){
+        this.destroy();
         if(this.isPlayers){
             this.gameRoom.mainController.emitEvent("mill-destroy", { position: this.position, posId: this.posId });
         }
-        this.millDestroyedStreamSunscription.unsubscribe();
     }
 
     setPropertiesToDefault(){
