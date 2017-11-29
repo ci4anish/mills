@@ -50,11 +50,12 @@ export class MainController {
         this.gameRoom.setPlayerId(id);
     }
 
-    onSynchronizeGame (){
+    onSynchronizeGame (players){
         if(this.creatingGame){
             this.creatingGame = false;
             this.gameRoom.getSyncStream().next(true);
         }
+        this.gameRoom.setUpPlayers(players);
         this.overlay.setTextField("Synchronized");
         this.overlay.close();
     }

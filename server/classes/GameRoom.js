@@ -38,7 +38,13 @@ module.exports = class GameRoom {
         this.sunEventSubscription = this.sun.getEventStream().map(this.mapEvent).subscribe(this.eventEmmiter);
         this.sunEventChangeSubscription = this.sun.getEventChangeStream().map(this.mapEvent).subscribe(this.eventEmmiter);
         let onConnected = () => {
-            this.emitEvent({ eName: "synchronize-game" });
+            this.emitEvent({
+                eName: "synchronize-game",
+                event: {
+                    player1: { name: this.playerMaster.getName(), id: this.playerMaster.getId() },
+                    player2: { name: this.playerListener.getName(), id: this.playerListener.getId() }
+                }
+            });
             this.listenerSocket.removeListener("connected", onConnected);
         };
         this.listenerSocket.on("connected", onConnected)

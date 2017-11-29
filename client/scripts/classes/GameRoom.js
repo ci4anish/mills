@@ -99,6 +99,11 @@ export class GameRoom {
         return this.playerId;
     }
 
+    setUpPlayers(players){
+        this.players[0].setup(players.player1);
+        this.players[1].setup(players.player2);
+    }
+
     destroy(){
         this.land.destroy();
         this.sky.destroy();

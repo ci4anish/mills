@@ -4,10 +4,10 @@ export class Player {
         this.gameRoom = gameRoom;
     }
 
-    setup(name, id){
+    setup(playerInfo){
         this.score = 0;
-        this.name = name;
-        this.id = id;
+        this.name = playerInfo.name;
+        this.id = playerInfo.id;
         this.main = this.id === this.gameRoom.getPlayerId();
     }
 
