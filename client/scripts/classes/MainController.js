@@ -1,26 +1,11 @@
-import { mainContainer, screenHeight } from "../constants";
 import { GameRoom } from "./GameRoom";
+import { Overlay } from "./Overlay";
 import { socket } from '../socket';
 
 export class MainController {
 
     constructor(){
         this.gameRoom = new GameRoom(this);
-    }
-
-    draw(){
-        this.overlay = document.createElement("DIV");
-        this.overlay.id = "overlay";
-        this.createGameBtn = document.createElement("BUTTON");
-        this.createGameBtn.id = "create-game-btn";
-        this.createGameBtn.innerText = "Create game";
-        this.textField = document.createElement("SPAN");
-        this.textField.id = "overlay-text";
-        this.textField.style.display = "none";
-
-        this.overlay.appendChild(this.createGameBtn);
-        this.overlay.appendChild(this.textField);
-        mainContainer.appendChild(this.overlay);
         this.onConnectGameListener = this.onConnectGame.bind(this);
         this.onReceivePlayerIdListener = this.onReceivePlayerId.bind(this);
         this.onSynchronizeGameListener = this.onSynchronizeGame.bind(this);
@@ -28,28 +13,18 @@ export class MainController {
     }
 
     setup(){
-        this.draw();
-        this.createGameBtn.addEventListener("click", this.createGame.bind(this));
+        this.overlay = new Overlay();
+        this.overlay.getBtnClickStream().subscribe(this.createGame.bind(this));
         this.listenToGameSocket();
     }
 
     createGame(){
         this.creatingGame = true;
-        this.toTextMode();
+        this.overlay.toTextMode();
         this.gameRoomObservable = this.gameRoom.createGame();
         this.gameRoomObservableSubscription = this.gameRoomObservable.subscribe((state) => {
-            this.textField.innerText = state;
+            this.overlay.setTextField(state);
         });
-    }
-
-    toTextMode(){
-        this.createGameBtn.style.display = "none";
-        this.textField.style.display = "inline-block";
-    }
-
-    toBtnMode(){
-        this.createGameBtn.style.display = "inline-block";
-        this.textField.style.display = "none";
     }
 
     listenToGameSocket(){
@@ -66,8 +41,8 @@ export class MainController {
     }
 
     onConnectGame (config){
-        this.toTextMode();
-        this.textField.innerText = "Synchronizing game...";
+        this.overlay.toTextMode();
+        this.overlay.setTextField("Synchronizing game...");
         this.gameRoom.onGameConnected(config);
     }
 
@@ -80,8 +55,8 @@ export class MainController {
             this.creatingGame = false;
             this.gameRoom.getSyncStream().next(true);
         }
-        this.textField.innerText = "Synchronized";
-        this.close();
+        this.overlay.setTextField("Synchronized");
+        this.overlay.close();
     }
 
     onEndGame (){
@@ -90,16 +65,8 @@ export class MainController {
             this.gameRoomObservableSubscription.unsubscribe();
         }
         this.gameRoom.destroy();
-        this.toBtnMode();
-        this.open();
-    }
-
-    close(){
-        this.overlay.style.top = -screenHeight + "px";
-    }
-
-    open(){
-        this.overlay.style.top = 0;
+        this.overlay.toBtnMode();
+        this.overlay.open();
     }
 
     emitEvent(name, event){
