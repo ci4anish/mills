@@ -1,41 +1,64 @@
 import { mainContainer } from "../constants";
 import Utils from "../utils"
 
+class ScoreField {
+    constructor(labelText){
+        this.field = document.createElement("DIV");
+        let label = document.createElement("SPAN");
+        label.innerText = labelText + ": ";
+        this.valueField = document.createElement("SPAN");
+        this.field.appendChild(label);
+        this.field.appendChild(this.valueField);
+        this.field.classList.add("player-score");
+    }
+
+    getElement(){
+        return this.field;
+    }
+
+    updateValue(value){
+        this.valueField.innerText = value;
+    }
+
+    setColor(color){
+        this.field.style.color = color;
+    }
+}
+
 export class GameScore {
 
     constructor(){
-        this.score = 0;
     }
 
     draw(){
         this.scoreBar = document.createElement("DIV");
         this.scoreBar.id = "score-bar";
-        this.updateScoreBar(this.score);
+        this.player1Score = new ScoreField("Player1");
+        this.player2Score = new ScoreField("Player2");
+
+        this.scoreBar.appendChild(this.player1Score.getElement());
+        this.scoreBar.appendChild(this.player2Score.getElement());
+        this.player1Score.updateValue(0);
+        this.player2Score.updateValue(0);
         mainContainer.appendChild(this.scoreBar);
     }
 
-    setComboScore(newScore, comboMultiplier){
-        this.setColor("red");
-        this.score += (newScore * comboMultiplier);
-        this.updateScoreBar(`${this.score} COMBO x${comboMultiplier}`);
+    setComboScore(player, newScore, comboMultiplier){
+        this[player + "SCore"].setColor("red");
+        this.updateScoreBar(player, `${newScore} COMBO x${comboMultiplier}`);
         setTimeout(() => {
-            this.setColor("black");
-            this.updateScoreBar(this.score);
+            this[player + "SCore"].setColor("black");
+            this.updateScoreBar(player, newScore);
         }, 500);
 
     }
 
-    setColor(color){
-        this.scoreBar.style.color = color;
+    setScore(player, newScore){
+        this.updateScoreBar(player, newScore);
     }
 
-    setScore(newScore){
-        this.score += newScore;
-        this.updateScoreBar(this.score);
-    }
-
-    updateScoreBar(score){
-        this.scoreBar.innerText = score;
+    updateScoreBar(player, score){
+        this[player + "SCore"].updateValue(score);
     }
 
     destroy(){

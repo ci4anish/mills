@@ -13,10 +13,7 @@ export class Player {
 
     addScore(score, combo = 1){
         this.score += score * combo;
-        console.log("Player", this.name);
-        console.log("Score", this.score);
-        console.log("Score total", score);
-        console.log("Combo", combo > 1);
+        this.gameRoom.updateScoreBar(this.getId(), this.score, combo);
     }
 
     getScore(){

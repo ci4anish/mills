@@ -109,6 +109,10 @@ export class GameRoom {
         return this.player;
     }
 
+    updateScoreBar(playerId, score, combo){
+
+    }
+
     destroy(){
         this.land.destroy();
         this.sky.destroy();
