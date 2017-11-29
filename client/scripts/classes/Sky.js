@@ -28,5 +28,3 @@ export class Sky {
         Utils.removeElement(this.element);
     }
 }
-
-export let sky = new Sky();
