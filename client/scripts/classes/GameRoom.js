@@ -60,7 +60,6 @@ export class GameRoom {
         this.clouds.forEach(cloud => cloud.setup());
         this.sky.draw();
         this.land.setup(pathPoints);
-        this.gameScore.draw();
         this.sun.setup();
         this.millsManager.setup();
     }
@@ -103,14 +102,22 @@ export class GameRoom {
         this.players[0].setup(players.player1);
         this.players[1].setup(players.player2);
         this.player = this.players.find(player => player.main);
+        this.gameScore.drawPlayersScores(this.players);
     }
 
     getPlayer(){
         return this.player;
     }
 
-    updateScoreBar(playerId, score, combo){
-
+    updateScoreBar(playerId, score, combo, emit){
+        if(emit){
+            this.mainController.emitEvent("update-player-score", { playerId, score, combo });
+        }
+        if(combo > 1){
+            this.gameScore.setComboScore(playerId, score, combo);
+        }else{
+            this.gameScore.setScore(playerId, score);
+        }
     }
 
     destroy(){

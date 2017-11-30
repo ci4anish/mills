@@ -61,7 +61,7 @@ module.exports = class GameRoom {
 
         this.rxMasterSocketPair = new RxSocketPair(this.masterSocket, this.listenerSocket);
         this.rxMasterSocketPair.listenToEventAndEmit("mill-energy-gathered", (millConfig) => millConfig.posId);
-        // this.rxMasterSocketPair.listenToEventAndEmit("mill-score-updated");
+        this.rxMasterSocketPair.listenToEventAndEmit("update-player-score", (info) => info);
 
         this.millDestroyStream = Observable.merge(
             Observable.fromEvent(this.masterSocket, "mill-destroy"),

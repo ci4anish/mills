@@ -16,6 +16,7 @@ export class MainController {
         this.onReceivePlayerIdListener = this.onReceivePlayerId.bind(this);
         this.onSynchronizeGameListener = this.onSynchronizeGame.bind(this);
         this.onAddMillListener = this.onAddMill.bind(this);
+        this.onUpdatePlayerScoreListener = this.onUpdatePlayerScore.bind(this);
         this.onEndGameListener = this.onEndGame.bind(this);
         this.allMillsDestroyStream = new Subject();
     }
@@ -41,6 +42,7 @@ export class MainController {
         socket.on("synchronize-game", this.onSynchronizeGameListener);
         socket.on("add-mill", this.onAddMillListener);
         this.millEnergyGatheredStream = Observable.fromEvent(socket, "mill-energy-gathered").multicast(new ReplaySubject(1)).refCount();
+        socket.on("update-player-score", this.onUpdatePlayerScoreListener);
         socket.on("end-game", this.onEndGameListener);
         // socket.on('disconnect', function(socket){
         //     socket.removeListener("connect-game", this.onConnectGameListener);
@@ -80,6 +82,11 @@ export class MainController {
 
     onAddMill(millConfig){
         this.gameRoom.onAddMill(millConfig);
+    }
+
+    onUpdatePlayerScore(updateInfo){
+        let { playerId, score, combo } = updateInfo;
+        this.gameRoom.updateScoreBar(playerId, score, combo, false);
     }
 
     onEndGame (){

@@ -2,10 +2,11 @@ import { mainContainer } from "../constants";
 import Utils from "../utils"
 
 class ScoreField {
-    constructor(labelText){
+    constructor(playeId, playerName){
+        this.playeId = playeId;
         this.field = document.createElement("DIV");
         let label = document.createElement("SPAN");
-        label.innerText = labelText + ": ";
+        label.innerText = playerName + ": ";
         this.valueField = document.createElement("SPAN");
         this.field.appendChild(label);
         this.field.appendChild(this.valueField);
@@ -28,37 +29,39 @@ class ScoreField {
 export class GameScore {
 
     constructor(){
-    }
-
-    draw(){
         this.scoreBar = document.createElement("DIV");
         this.scoreBar.id = "score-bar";
-        this.player1Score = new ScoreField("Player1");
-        this.player2Score = new ScoreField("Player2");
-
-        this.scoreBar.appendChild(this.player1Score.getElement());
-        this.scoreBar.appendChild(this.player2Score.getElement());
-        this.player1Score.updateValue(0);
-        this.player2Score.updateValue(0);
         mainContainer.appendChild(this.scoreBar);
+        this.playersScoreBars = [];
     }
 
-    setComboScore(player, newScore, comboMultiplier){
-        this[player + "SCore"].setColor("red");
-        this.updateScoreBar(player, `${newScore} COMBO x${comboMultiplier}`);
+    drawPlayersScores(players){
+        players.forEach(player => {
+            let bar = new ScoreField(player.getId(), player.getName());
+            this.scoreBar.appendChild(bar.getElement());
+            bar.updateValue(0);
+            this.playersScoreBars.push(bar);
+        });
+    }
+
+    setComboScore(playerId, newScore, comboMultiplier){
+        let bar = this.playersScoreBars.find(bar => bar.playeId === playerId);
+        bar.setColor("red");
+        this.updateScoreBar(bar, `${newScore} COMBO x${comboMultiplier}`);
         setTimeout(() => {
-            this[player + "SCore"].setColor("black");
-            this.updateScoreBar(player, newScore);
+            bar.setColor("black");
+            this.updateScoreBar(bar, newScore);
         }, 500);
 
     }
 
-    setScore(player, newScore){
-        this.updateScoreBar(player, newScore);
+    setScore(playerId, newScore){
+        let bar = this.playersScoreBars.find(bar => bar.playeId === playerId);
+        this.updateScoreBar(bar, newScore);
     }
 
-    updateScoreBar(player, score){
-        this[player + "SCore"].updateValue(score);
+    updateScoreBar(bar, score){
+        bar.updateValue(score);
     }
 
     destroy(){
