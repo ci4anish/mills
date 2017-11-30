@@ -4,8 +4,12 @@ export const WindListenerMixin = (superclass) => class extends superclass {
         return this.gameRoom.getWind().getStream();
     }
 
+    getWindEventChangeStream(){
+        return this.gameRoom.getWind().getEventChangedStream();
+    }
+
     listenToWind(){
-        this.blowSubscription = this.gameRoom.getWind().getStream().subscribe(this.move.bind(this));
+        this.blowSubscription = this.getWindStream().subscribe(this.move.bind(this));
     }
 
     move(powerKoef){

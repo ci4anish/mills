@@ -6,21 +6,24 @@ import { Sun } from "./Sun";
 import { MillsManager } from "./MillsManager";
 import { Wind } from "./Wind";
 import { Player } from "./Player";
+import { EnergyGatherer } from "./EnergyGatherer";
 import Utils from "../utils";
 
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-export class GameRoom {
+export class GameRoom extends EnergyGatherer{
     constructor(mainController){
+        super();
         this.mainController = mainController;
         this.syncStream = new ReplaySubject(1);
+        this.gameRoom = this;
     }
 
     createGame(){
         return Observable.create((observer) => {
             observer.next("Creating game");
-            this.setUpElements();
+            this.prepareGame();
             let config = {
                 pathPoints: this.land.getPathPoints(),
                 availablePositions: Utils.mapToString(this.land.getAvailablePositions())
@@ -31,6 +34,15 @@ export class GameRoom {
                 observer.complete();
             });
         });
+    }
+
+    prepareGame(){
+        this.setUpElements();
+        this.listenToSourcesEventChange();
+    }
+
+    energyEventChange(e){
+        // I can use this to implement add scores to player who press key first on event change
     }
 
     setUpElements(pathPoints){
@@ -85,7 +97,7 @@ export class GameRoom {
     }
 
     onGameConnected(config){
-        this.setUpElements(config.pathPoints);
+        this.prepareGame(config.pathPoints);
         this.playerId = config.playerId;
         this.mainController.emitEvent("connected");
     }

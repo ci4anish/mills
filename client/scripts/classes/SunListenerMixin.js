@@ -4,8 +4,12 @@ export const SunListenerMixin = (superclass) => class extends superclass {
         return this.gameRoom.getSun().getStream();
     }
 
+    getSunEventChangeStream(){
+        return this.gameRoom.getSun().getEventChangedStream();
+    }
+
     listenToSun(){
-        this.sunSubscription = this.gameRoom.getSun().getStream().subscribe(this.move.bind(this));
+        this.sunSubscription = this.getSunStream().subscribe(this.move.bind(this));
     }
 
     move(powerKoef){
