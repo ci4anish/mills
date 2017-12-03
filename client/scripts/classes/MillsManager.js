@@ -45,7 +45,7 @@ export class MillsManager {
         pull.forEach(millObject => {
             streams.push(millObject.energyStream);
         });
-        let comboCounter = 0;
+        let comboCounter = 1;
 
         this.clicksStreamSubscription = Observable.merge(...streams)
             .scan((last, current) => {
@@ -54,16 +54,38 @@ export class MillsManager {
                 return last
             }, [{ energy: 0, comboFactor: 1 }, { energy: 0, comboFactor: 1 }, { energy: 0, comboFactor: 1 }])
             .subscribe(energies => {
-                let lastThreeSum = energies.reduce((x, y) => x + y.energy * y.comboFactor, 0);
-                let lastClicked = energies[energies.length - 1];
+                let energiesCopy = energies.slice();
+                let lastThreeSum = energiesCopy.reduce((x, y) => x + y.energy * y.comboFactor, 0);
+                energiesCopy.shift();
+                let lastTwoSum = energiesCopy.reduce((x, y) => x + y.energy * y.comboFactor, 0);
+                let lastClicked = energiesCopy[energiesCopy.length - 1];
                 let score = Math.floor(lastClicked.energy);
-                if(Math.ceil(lastThreeSum) > 270 && comboCounter <= 0){
+
+                if(comboCounter === 1){
                     comboCounter = 2;
-                    this.gameRoom.getPlayer().addScore(score, 3);
-                }else{
-                    comboCounter--;
                     this.gameRoom.getPlayer().addScore(score);
+                }else if(comboCounter === 2 && lastTwoSum < 180){
+                    comboCounter = 2;
+                    this.gameRoom.getPlayer().addScore(score);
+                }else if(comboCounter === 2 && lastTwoSum >= 180){
+                    comboCounter = 3;
+                    this.gameRoom.getPlayer().addScore(score, 2);
+                }else if(comboCounter === 3 && lastThreeSum < 270){
+                    comboCounter = 1;
+                    this.gameRoom.getPlayer().addScore(score);
+                }else if(comboCounter === 3 && lastThreeSum >= 270){
+                    comboCounter = 1;
+                    this.gameRoom.getPlayer().addScore(score, 3);
                 }
+
+
+                // if(Math.ceil(lastThreeSum) > 270 && comboCounter <= 0){
+                //     comboCounter = 2;
+                //     this.gameRoom.getPlayer().addScore(score, 3);
+                // }else{
+                //     comboCounter--;
+                //     this.gameRoom.getPlayer().addScore(score);
+                // }
 
             });
     }
