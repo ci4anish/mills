@@ -1,7 +1,7 @@
 import { screenHeight } from "../constants";
 import { EventEmmiter } from "./EventEmmiter";
 
-require('rxjs/add/operator/map');
+import 'rxjs/add/operator/map';
 
 export class Wind extends EventEmmiter {
     constructor(){

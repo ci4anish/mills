@@ -1,6 +1,6 @@
 import { mainContainer, screenHeight } from "../constants";
 import { Observable } from 'rxjs/Observable';
-require('rxjs/add/observable/fromEvent');
+import 'rxjs/add/observable/fromEvent';
 
 export class Overlay{
 
