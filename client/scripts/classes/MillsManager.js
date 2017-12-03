@@ -78,15 +78,6 @@ export class MillsManager {
                     this.gameRoom.getPlayer().addScore(score, 3);
                 }
 
-
-                // if(Math.ceil(lastThreeSum) > 270 && comboCounter <= 0){
-                //     comboCounter = 2;
-                //     this.gameRoom.getPlayer().addScore(score, 3);
-                // }else{
-                //     comboCounter--;
-                //     this.gameRoom.getPlayer().addScore(score);
-                // }
-
             });
     }
 
